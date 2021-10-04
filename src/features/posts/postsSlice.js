@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, nanoid } from '@reduxjs/toolkit'
+import { createAsyncThunk, createSlice, nanoid, createSelector } from '@reduxjs/toolkit'
 import { client } from '../../api/client';
 
 const initialState = {
@@ -105,3 +105,12 @@ export const selectAllPosts = state => state.posts.posts;
 
 export const selectPostById = (state, postId) => 
   state.posts.posts.find(post => post.id === postId);
+
+//createSelector() generates memoized selectors that will only recalculate results when the inputs change
+//createSelector() will pass all of the arguments into each of our input selectors
+//and what those input selectors return becomes the arguments for the output selector
+//it will only re-run the output selector if either posts or userId has changed
+export const selectPostsByUser = createSelector (
+  [selectAllPosts, (state, userId) => userId], //input selector
+  (posts, userId) => posts.filter(post => post.user === userId) //output selector
+);
